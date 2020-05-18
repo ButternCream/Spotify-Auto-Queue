@@ -1,0 +1,32 @@
+{
+	"channels": ["butterandcream"],
+	"reward-id": "a04d661d-a6a9-41a6-b1b5-d0cc4e15a285",
+	"log_custom_reward_ids": false,
+	"_reward_comment": "To find your custom reward id. Enable the above to 'true'. Go to your twitch and use the CUSTOM channel reward you want.",
+	"bot": {
+		"enabled": true,
+		"_enabled_comment": "true = bot will respond in chat",
+		"name": "spotifyq",
+		"client_id": "",
+		"oauth": "",
+		"_oauth_comment": "get oauth by logging in and going to https://twitchapps.com/tmi/",
+		"response": "/me @{user} successfuly added the song '{song} by {artists}' to the Spotify queue.",
+		"_response_comment": "{user} = twitch username | {song} = song name | {artists} = list of artists. Must use ALL variables",
+		"current_song_response": "/me Currently playing: {name} by {artists}"
+	},
+	"history": {
+		"_what_is_it": "Whenever a user requests a song it will be added to the playlist",
+		"_comment": "The id is the '6Be7sDDhpX0dTKogMflsfo' in https://open.spotify.com/playlist/6Be7sDDhpX0dTKogMflsfo?si=...",
+		"enabled": false,
+		"playlist_id": "spotify playlist id goes here"
+	},
+	"_example_ban": "spotify:track:4HIYFlCh5aZq0jwvsn2DoK",
+	"ban_message": "Yeeted, Skeeted, and Deleted",
+	"banned": [],
+	"auto_launch_browser": true,
+	"spotify": {
+		"_create_id_here": "https://developer.spotify.com/dashboard/applications",
+		"CLIENT_ID": "",
+		"CLIENT_SECRET": ""
+	}
+}
