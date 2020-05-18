@@ -1,6 +1,6 @@
 # Spotify Auto Queue
 
-### A twitch bot framework to add songs to your spotify queue
+### A twitch bot framework to add songs to your spotify queue using custom channel rewards
 **Note: Requires PREMIUM**
 
 ### Spotify Steps
