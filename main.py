@@ -54,7 +54,7 @@ def new_message(context):
 
       elif 'track' in song_link:
         # Refresh the spotify auth and add song to queue
-        spotify.refresh_wrapper()
+        spotify.refresh()
         data = spotify.add_song_to_queue(f'spotify:track:{uri}')
         if data:
           logger.debug(data)

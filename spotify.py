@@ -86,6 +86,7 @@ def user_Authorization():
 
 
 def refresh():
+  global authorization_header
   code_payload = {
       "grant_type": "refresh_token",
       "refresh_token": str(refresh_token)
@@ -188,12 +189,3 @@ def process_request(url, request_type):
     spotify_request = requests.put
   result = spotify_request(url, headers=authorization_header)
   return result
-
-
-def refresh_wrapper():
-  global authorization_header
-  logger.info("REFRESHING AUTH")
-  authorization_header = refresh()
-  logger.debug("New Auth Header")
-  logger.debug(authorization_header)
-  logger.debug('\n\n')
