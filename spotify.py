@@ -20,6 +20,8 @@ data = Utils.load_settings()
 # Client Keys
 CLIENT_ID = data['spotify']['CLIENT_ID']
 CLIENT_SECRET = data['spotify']['CLIENT_SECRET']
+history = data['history']['enabled']
+playlist_id = data['history']['playlist_id']
 
 # Spotify URLS
 SPOTIFY_AUTH_URL = "https://accounts.spotify.com/authorize"
@@ -37,6 +39,7 @@ STATE = ""
 SHOW_DIALOG_bool = True
 SHOW_DIALOG_str = str(SHOW_DIALOG_bool).lower()
 refresh_token = None
+authorization_header = None
 
 # Authorization of application with spotify
 
@@ -105,3 +108,92 @@ def refresh():
   authorization_header = {
       "Authorization": "Bearer {}".format(access_token)}
   return authorization_header
+
+
+def add_song_to_queue(uri):
+  url = 'https://api.spotify.com/v1/me/player/queue?uri={id}'.format(id=uri)
+  result = process_request(url, 'post')
+  logger.debug(result.text)
+  if result.status_code == 204:
+    global history
+    if history:
+      add_to_history(uri)
+    track_req = get_track_info(uri)
+    json_obj = track_req.json()
+    artists = ', '.join(artists['name']
+                        for artists in json_obj['artists'])
+    song_name = json_obj['name']
+    data = {
+        'song': song_name,
+        'artists': artists,
+        'uri': uri
+    }
+    return data
+  return
+
+
+def add_to_history(uri):
+  global playlist_id
+  url = f'https://api.spotify.com/v1/playlists/{playlist_id}/tracks?uris={uri}'
+  result = process_request(url, 'post')
+  logger.debug(result.text)
+  return result
+
+
+def get_track_info(uri):
+  url = 'https://api.spotify.com/v1/tracks/{id}'
+  id = uri.split(':')[-1]
+  return process_request(url.format(id=id), 'get')
+
+
+def get_song_and_artist(uri):
+  track_req = get_track_info(uri)
+  json_obj = track_req.json()
+  logger.debug(json_obj)
+  artists = ', '.join(artists['name']
+                      for artists in json_obj['artists'])
+  song_name = json_obj['name']
+  logger.debug('here')
+  return song_name, artists
+
+
+def get_current_song():
+  url = 'https://api.spotify.com/v1/me/player/currently-playing'
+  response = process_request(url, 'get')
+  if response.status_code == 200:
+    try:
+      response_json = response.json()
+      song_title = response_json['item']['name']
+      artists_json = response_json['item']['artists']
+      artists = ', '.join(artists['name']
+                          for artists in artists_json)
+      logger.debug(f'Found {song_title} by {artists}')
+      return song_title, artists
+    except Exception as e:
+      logger.debug(str(e))
+  else:
+    logger.debug(response)
+
+  return None
+
+
+def process_request(url, request_type):
+  global authorization_header
+  logger.info('Processing {} request {}'.format(request_type, url))
+  if request_type == 'post':
+    spotify_request = requests.post
+  elif request_type == 'get':
+    spotify_request = requests.get
+  else:
+    spotify_request = requests.put
+  result = spotify_request(url, headers=authorization_header)
+  return result
+
+
+def refresh_wrapper():
+  global authorization_header
+  logger.info("REFRESHING AUTH")
+  authorization_header = refresh()
+  logger.debug("New Auth Header")
+  logger.debug(authorization_header)
+  logger.debug('\n\n')

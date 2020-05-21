@@ -6,6 +6,11 @@ import logging
 logger = logging.getLogger("Queue_Bot")
 
 
+class Context:
+  def __init__(self, **kwargs):
+    vars(self).update(kwargs)
+
+
 class Bot(SingleServerIRCBot):
   def __init__(self, name, client_id, oauth, channel):
     self.HOST = "irc.chat.twitch.tv"
@@ -42,9 +47,10 @@ class Bot(SingleServerIRCBot):
     """
     tags = {kvpair["key"]: kvpair["value"] for kvpair in event.tags}
     tags['message'] = event.arguments[0]
+    ctx = Context(event=tags, bot=self)
     if self.handler:
       # To generalize have your handler func be (*args, **kwargs)
-      self.handler(tags)
+      self.handler(ctx)
 
   def send_message(self, message):
     """Send a message
