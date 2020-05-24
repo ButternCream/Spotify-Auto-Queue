@@ -43,7 +43,7 @@ def new_message(context):
     song_link = context.event['message']
     uri = re.search(r'\w{22}', song_link.rstrip().strip())
     # Check for valid URI / URL
-    if uri:
+    if uri and 'track' in song_link:
       uri = uri.group()
       song, artists = spotify.get_song_and_artist(uri)
       username = context.event['display-name']
@@ -51,21 +51,19 @@ def new_message(context):
       # Check if song is banned
       if any(uri in s for s in banned_songs):
         context.bot.send_message(ban_message)
-
-      elif 'track' in song_link:
-        # Refresh the spotify auth and add song to queue
-        spotify.refresh()
-        data = spotify.add_song_to_queue(f'spotify:track:{uri}')
-        if data:
-          logger.debug(data)
-          logger.info(
-              f'{username} successfuly added song \'{song} by {artists}\'')
-          if bot_enabled:
-            context.bot.send_message(bot_response.format(
-                user=username,
-                song=song,
-                artists=artists)
-            )
+      else:
+          spotify.refresh()
+          data = spotify.add_song_to_queue(f'spotify:track:{uri}')
+          if data:
+            logger.debug(data)
+            logger.info(
+                f'{username} successfuly added song \'{song} by {artists}\'')
+            if bot_enabled:
+              context.bot.send_message(bot_response.format(
+                  user=username,
+                  song=song,
+                  artists=artists)
+              )
 
 
 app = Flask(__name__)
