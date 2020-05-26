@@ -6,6 +6,7 @@
 ### Spotify Steps
 1. Create a client id on the [spotify developers page](https://developer.spotify.com/dashboard/applications)
 2. Put the client id and client secret in `settings.json`
+3. In the app settings add http://127.0.0.1:8080/callback/q to the redirect URI's. You can change it in `spotify.py`
 
 ### Twitch Steps
 1. Create a twitch account for your bot
